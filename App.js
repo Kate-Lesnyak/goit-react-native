@@ -30,6 +30,7 @@ export default function App() {
 		'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
 	});
 	const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 16 * 2);
+	const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
 	useEffect(() => {
 		const onChange = () => {
@@ -58,6 +59,11 @@ export default function App() {
 		setIsShowPassword(prevState => !prevState);
 	}
 
+	const keyboardHide = () => {
+		Keyboard.dismiss;
+		setIsShowKeyboard(false);
+	}
+
 	const handleSubmit = () => {
 		console.log(state);
 		setIsShowPassword(true);
@@ -65,12 +71,21 @@ export default function App() {
 		setState(registerState);
 	};
 
+
 	return (
 		<View style={styles.container} onLayout={onLayoutRootView}>
-			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<TouchableWithoutFeedback
+				// onPress={Keyboard.dismiss}
+				onPress={keyboardHide}
+			>
 				<ImageBackground source={BackgroundImage} style={styles.image}>
-					<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
-						<View style={styles.registerForm}>
+					<KeyboardAvoidingView
+						behavior={Platform.OS === "ios" ? "padding" : null}
+					>
+						<View style={{
+							...styles.registerForm,
+							paddingBottom: !isShowKeyboard ? 78 : 0
+						}}>
 							<View style={styles.avatarBox}>
 								<TouchableOpacity style={styles.avatarBtn} activeOpacity={0.8} onPress={toogleAddPhoto}>
 									<Text>
@@ -82,9 +97,6 @@ export default function App() {
 							{/* Dimensions */}
 							<View style={{ width: dimensions }}>
 								<Text style={styles.registerTitle} >Регистрация</Text>
-
-								{/*=========== todo============= */}
-								{/* <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
 								<View style={styles.inputContainer}>
 									<TextInput style={{
 										...styles.inputForm,
@@ -95,8 +107,8 @@ export default function App() {
 										placeholderTextColor={'#BDBDBD'}
 										cursorColor={'#212121'}
 										value={state.login}
-										onFocus={() => setIsFocusedLogin(true)}
-										onBlur={() => setIsFocusedLogin(false)}
+										onFocus={() => { setIsFocusedLogin(true), setIsShowKeyboard(true) }}
+										onBlur={() => { setIsFocusedLogin(false), setIsShowKeyboard(false) }}
 										onChangeText={value => setState(prevState => ({ ...prevState, login: value }))}
 									/>
 									<TextInput style={{
@@ -108,8 +120,8 @@ export default function App() {
 										placeholderTextColor={'#BDBDBD'}
 										cursorColor={'#212121'}
 										value={state.email}
-										onFocus={() => setIsFocusedEmail(true)}
-										onBlur={() => setIsFocusedEmail(false)}
+										onFocus={() => { setIsFocusedEmail(true), setIsShowKeyboard(true) }}
+										onBlur={() => { setIsFocusedEmail(false), setIsShowKeyboard(false) }}
 										onChangeText={value => setState(prevState => ({ ...prevState, email: value }))}
 									/>
 
@@ -125,8 +137,8 @@ export default function App() {
 											placeholderTextColor={'#BDBDBD'}
 											cursorColor={'#212121'}
 											value={state.password}
-											onFocus={() => setIsFocusedPassword(true)}
-											onBlur={() => setIsFocusedPassword(false)}
+											onFocus={() => { setIsFocusedPassword(true), setIsShowKeyboard(true) }}
+											onBlur={() => { setIsFocusedPassword(false), setIsShowKeyboard(false) }}
 											onChangeText={value => setState(prevState => ({ ...prevState, password: value }))}
 										/>
 										<TouchableOpacity
@@ -138,13 +150,18 @@ export default function App() {
 									</View>
 
 								</View>
-								{/* </KeyboardAvoidingView> */}
-								{/*=========== todo============= */}
 
-								<TouchableOpacity style={styles.registerBtn} activeOpacity={0.8} onPress={handleSubmit}>
+								{/* <TouchableOpacity style={{ ...styles.registerBtn, display: isShowKeyboard ? 'none' : null }} activeOpacity={0.8} onPress={handleSubmit}>
 									<Text style={styles.registerBtnTitle}>Зарегистрироваться</Text>
 								</TouchableOpacity>
-								<Text style={styles.textIsAccount}>Уже есть аккаунт? Войти</Text>
+								<Text style={{ ...styles.textIsAccount, display: isShowKeyboard ? 'none' : null }}>Уже есть аккаунт? Войти</Text> */}
+
+								{!isShowKeyboard && <View>
+									<TouchableOpacity style={styles.registerBtn} activeOpacity={0.8} onPress={handleSubmit}>
+										<Text style={styles.registerBtnTitle}>Зарегистрироваться</Text>
+									</TouchableOpacity>
+									<Text style={styles.textIsAccount}>Уже есть аккаунт? Войти</Text>
+								</View>}
 							</View>
 						</View>
 					</KeyboardAvoidingView>
@@ -163,7 +180,8 @@ const styles = StyleSheet.create({
 
 	image: {
 		flex: 1,
-		justifyContent: 'flex-end'
+		justifyContent: 'flex-end',
+
 	},
 
 	registerForm: {

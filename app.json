@@ -14,7 +14,9 @@
 		"assetBundlePatterns": [
 			"**/*"
 		],
+		"jsEngine": "hermes",
 		"ios": {
+			"jsEngine": "jsc",
 			"supportsTablet": true
 		},
 		"android": {
@@ -22,7 +24,8 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"softwareKeyboardLayoutMode": "pan"
+			"jsEngine": "jsc"
+			// "softwareKeyboardLayoutMode": "pan"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
